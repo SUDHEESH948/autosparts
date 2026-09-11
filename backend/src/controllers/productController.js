@@ -43,6 +43,44 @@ const getProducts = async (req, res) => {
         };
 
         /* -------------------------------------------------
+           Category filter (ignore "All")
+        ------------------------------------------------- */
+
+        if (
+            req.query.category &&
+            req.query.category.trim() &&
+            req.query.category.trim() !== "All"
+        ) {
+            const escapedCategory = req.query.category
+                .trim()
+                .replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
+
+            filter.category = {
+                $regex: new RegExp(`^${escapedCategory}$`, "i"),
+            };
+        }
+
+        /* -------------------------------------------------
+           Search query filter
+        ------------------------------------------------- */
+
+        if (req.query.search && req.query.search.trim()) {
+            const escapedSearch = req.query.search
+                .trim()
+                .replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
+
+            const searchRegex = new RegExp(escapedSearch, "i");
+
+            filter.$or = [
+                { name: searchRegex },
+                { description: searchRegex },
+                { brand: searchRegex },
+                { partNumber: searchRegex },
+                { category: searchRegex },
+            ];
+        }
+
+        /* -------------------------------------------------
            Total count
         ------------------------------------------------- */
 

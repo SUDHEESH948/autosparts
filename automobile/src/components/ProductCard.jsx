@@ -1,9 +1,11 @@
 import { useState } from "react";
-import { ShieldCheck, Wrench } from "lucide-react";
+import { Wrench, ShieldCheck } from "lucide-react";
 import whatsappIcon from "../assets/gemini-svg (1).svg";
 
 const PRIMARY_BLUE = "#0084D1";
 const WHATSAPP_NUMBER = "971568706629";
+const FALLBACK_IMAGE =
+    "https://images.unsplash.com/photo-1486006920555-c77dce18193b?auto=format&fit=crop&w=600&q=80";
 
 export default function ProductCard({
     product,
@@ -141,11 +143,15 @@ Thank you!`;
                     {/* IMAGE */}
                     <div className="relative h-[210px] overflow-hidden bg-slate-100">
                         <img
-                            src={product.image}
+                            src={product.image || FALLBACK_IMAGE}
                             alt={product.name}
                             draggable="false"
                             loading="lazy"
                             decoding="async"
+                            onError={(e) => {
+                                e.currentTarget.onerror = null;
+                                e.currentTarget.src = FALLBACK_IMAGE;
+                            }}
                             className="h-full w-full object-cover transition-transform duration-700 ease-out hover:scale-110"
                         />
 

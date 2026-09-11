@@ -37,7 +37,7 @@ const INITIAL_LIMIT = 10;
 
 const API_BASE_URL =
     import.meta.env.VITE_API_URL ||
-    "http://localhost:5000";
+    "https://autosparts.onrender.com";
 
 
 /* =====================================================
@@ -336,23 +336,21 @@ export default function AutoStore() {
                    HAS MORE
                 ========================================= */
 
-                if (total > 0) {
-
+                if (responseData?.hasMore !== undefined) {
+                    setHasMore(Boolean(responseData.hasMore));
+                } else if (total > 0) {
                     const currentlyLoaded =
                         append
                             ? products.length +
                               normalizedProducts.length
                             : normalizedProducts.length;
 
-
                     setHasMore(
                         normalizedProducts.length >=
                             INITIAL_LIMIT &&
                         currentlyLoaded < total
                     );
-
                 } else {
-
                     setHasMore(
                         normalizedProducts.length >=
                             INITIAL_LIMIT

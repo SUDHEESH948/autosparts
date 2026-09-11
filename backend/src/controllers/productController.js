@@ -281,8 +281,8 @@ const createProduct = async (req, res) => {
             .map((product) =>
                 product.partNumber
                     ? String(
-                          product.partNumber
-                      ).trim()
+                        product.partNumber
+                    ).trim()
                     : ""
             )
             .filter(Boolean);
@@ -356,10 +356,10 @@ const createProduct = async (req, res) => {
 
                 description:
                     product.description !==
-                    undefined
+                        undefined
                         ? String(
-                              product.description
-                          ).trim()
+                            product.description
+                        ).trim()
                         : "",
 
                 price: Number(
@@ -368,66 +368,66 @@ const createProduct = async (req, res) => {
 
                 image:
                     product.image !==
-                    undefined
+                        undefined
                         ? String(
-                              product.image
-                          ).trim()
+                            product.image
+                        ).trim()
                         : "",
 
                 brand:
                     product.brand !==
-                    undefined
+                        undefined
                         ? String(
-                              product.brand
-                          ).trim()
+                            product.brand
+                        ).trim()
                         : "",
 
                 partNumber:
                     product.partNumber !==
-                    undefined
+                        undefined
                         ? String(
-                              product.partNumber
-                          ).trim()
+                            product.partNumber
+                        ).trim()
                         : "",
 
                 barcode:
                     product.barcode !==
-                    undefined
+                        undefined
                         ? String(
-                              product.barcode
-                          ).trim()
+                            product.barcode
+                        ).trim()
                         : "",
 
                 stock:
                     product.stock !==
                         undefined &&
-                    product.stock !== null
+                        product.stock !== null
                         ? Number(
-                              product.stock
-                          )
+                            product.stock
+                        )
                         : 0,
 
                 type:
                     product.type !==
-                    undefined
+                        undefined
                         ? product.type
                         : "Item",
 
                 vehicleMake:
                     product.vehicleMake !==
-                    undefined
+                        undefined
                         ? product.vehicleMake
                         : "Universal",
 
                 vehicleModel:
                     product.vehicleModel !==
-                    undefined
+                        undefined
                         ? product.vehicleModel
                         : "",
 
                 vehicleYear:
                     product.vehicleYear !==
-                    undefined
+                        undefined
                         ? product.vehicleYear
                         : "",
 
@@ -455,11 +455,10 @@ const createProduct = async (req, res) => {
 
             message:
                 `${createdProducts.length} product` +
-                `${
-                    createdProducts.length ===
+                `${createdProducts.length ===
                     1
-                        ? ""
-                        : "s"
+                    ? ""
+                    : "s"
                 } created successfully`,
 
             count: createdProducts.length,

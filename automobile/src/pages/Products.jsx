@@ -342,18 +342,18 @@ export default function AutoStore() {
                     const currentlyLoaded =
                         append
                             ? products.length +
-                              normalizedProducts.length
+                            normalizedProducts.length
                             : normalizedProducts.length;
 
                     setHasMore(
                         normalizedProducts.length >=
-                            INITIAL_LIMIT &&
+                        INITIAL_LIMIT &&
                         currentlyLoaded < total
                     );
                 } else {
                     setHasMore(
                         normalizedProducts.length >=
-                            INITIAL_LIMIT
+                        INITIAL_LIMIT
                     );
                 }
 
@@ -1308,20 +1308,19 @@ Please provide more details.`;
                                             duration-200
                                             active:scale-95
 
-                                            ${
-                                                category ===
+                                            ${category ===
                                                 item
-                                                    ? "border-transparent text-white shadow-lg"
-                                                    : "border-slate-200 bg-white text-slate-500 hover:border-sky-300 hover:text-sky-600"
+                                                ? "border-transparent text-white shadow-lg"
+                                                : "border-slate-200 bg-white text-slate-500 hover:border-sky-300 hover:text-sky-600"
                                             }
                                         `}
                                         style={
                                             category ===
-                                            item
+                                                item
                                                 ? {
-                                                      backgroundColor:
-                                                          PRIMARY_BLUE,
-                                                  }
+                                                    backgroundColor:
+                                                        PRIMARY_BLUE,
+                                                }
                                                 : undefined
                                         }
                                     >
@@ -1698,7 +1697,7 @@ Please provide more details.`;
 
                             {!hasMore &&
                                 products.length >=
-                                    INITIAL_LIMIT && (
+                                INITIAL_LIMIT && (
 
                                     <div
                                         className="
@@ -1947,10 +1946,9 @@ function TrustItem({
                 md:px-7
                 md:py-5
 
-                ${
-                    isVisible
-                        ? "translate-y-0 opacity-100"
-                        : "translate-y-6 opacity-0"
+                ${isVisible
+                    ? "translate-y-0 opacity-100"
+                    : "translate-y-6 opacity-0"
                 }
             `}
             style={{

@@ -22,20 +22,22 @@ connectDB();
 const allowedOrigins = [
     "http://localhost:5173",
     "http://127.0.0.1:5173",
-
-    // Add your deployed frontend here later
-    // "https://your-frontend.vercel.app",
-];
+    process.env.FRONTEND_URL,
+].filter(Boolean);
 
 app.use(
     cors({
         origin: function (origin, callback) {
-            // Allow Postman, mobile apps and server-side requests
+            // Allow Postman, mobile apps, curl and server-to-server requests
             if (!origin) {
                 return callback(null, true);
             }
 
-            if (allowedOrigins.includes(origin)) {
+            // Allow localhost, custom FRONTEND_URL, or any Vercel deployment preview/production
+            if (
+                allowedOrigins.includes(origin) ||
+                origin.endsWith(".vercel.app")
+            ) {
                 return callback(null, true);
             }
 

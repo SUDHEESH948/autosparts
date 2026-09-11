@@ -1,4 +1,3 @@
-
 import Hero from "../components/Hero";
 import ProductCard from "../components/ProductCard";
 import PRODUCTS from "../data/products";

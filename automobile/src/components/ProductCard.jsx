@@ -13,14 +13,19 @@ const API_BASE_URL =
   "https://autosparts.onrender.com";
 
 const PLACEHOLDER_IMAGE =
-  "https://images.unsplash.com/photo-1486006920555-c77dce18193b?auto=format&fit=crop&w=600&q=80";
+  "data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22600%22%20height%3D%22450%22%20viewBox%3D%220%200%20600%20450%22%3E%3Crect%20fill%3D%22%23f1f5f9%22%20width%3D%22600%22%20height%3D%22450%22%2F%3E%3Ccircle%20cx%3D%22300%22%20cy%3D%22200%22%20r%3D%2245%22%20fill%3D%22%23cbd5e1%22%2F%3E%3Cpath%20d%3D%22M260%20270h80v12h-80zm-30%2024h140v8H230z%22%20fill%3D%22%2394a3b8%22%2F%3E%3Ctext%20fill%3D%22%2364748b%22%20font-family%3D%22system-ui%2C%20sans-serif%22%20font-size%3D%2218%22%20font-weight%3D%22700%22%20x%3D%2250%25%22%20y%3D%2275%25%22%20text-anchor%3D%22middle%22%3EAuto%20Spare%20Part%3C%2Ftext%3E%3C%2Fsvg%3E";
 
 /* =====================================================
    IMAGE URL
 ===================================================== */
 
 const getImageUrl = (image) => {
-  if (!image) {
+  if (
+    !image ||
+    typeof image !== "string" ||
+    image.includes("example.com") ||
+    image.includes("via.placeholder.com")
+  ) {
     return PLACEHOLDER_IMAGE;
   }
 
@@ -65,7 +70,7 @@ const formatPrice = (price) => {
    PRODUCT CARD
 ===================================================== */
 
-const ProductCard = ({ product }) => {
+const ProductCard = ({ product, onInquire, onFlip, flipped }) => {
   const navigate = useNavigate();
 
   /* ---------------------------------------------------
@@ -164,6 +169,11 @@ const ProductCard = ({ product }) => {
   --------------------------------------------------- */
 
   const handleViewProduct = () => {
+    if (onInquire) {
+      onInquire(product);
+      return;
+    }
+
     if (!productId) {
       console.error(
         "Product ID missing:",
@@ -172,7 +182,7 @@ const ProductCard = ({ product }) => {
       return;
     }
 
-    navigate(`/products/${productId}`);
+    navigate("/products");
   };
 
   /* ---------------------------------------------------
@@ -408,7 +418,7 @@ const ProductCard = ({ product }) => {
               disabled:opacity-50
             "
           >
-            View Product
+            {onInquire ? "Inquire on WhatsApp" : "View Product"}
 
             <ArrowRight
               size={17}

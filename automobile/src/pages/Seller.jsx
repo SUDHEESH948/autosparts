@@ -30,6 +30,16 @@ import {
 } from "lucide-react";
 import { ProductService } from "../api/api";
 
+const FALLBACK_IMAGE =
+  "data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22600%22%20height%3D%22450%22%20viewBox%3D%220%200%20600%20450%22%3E%3Crect%20fill%3D%22%23f1f5f9%22%20width%3D%22600%22%20height%3D%22450%22%2F%3E%3Ccircle%20cx%3D%22300%22%20cy%3D%22200%22%20r%3D%2245%22%20fill%3D%22%23cbd5e1%22%2F%3E%3Cpath%20d%3D%22M260%20270h80v12h-80zm-30%2024h140v8H230z%22%20fill%3D%22%2394a3b8%22%2F%3E%3Ctext%20fill%3D%22%2364748b%22%20font-family%3D%22system-ui%2C%20sans-serif%22%20font-size%3D%2218%22%20font-weight%3D%22700%22%20x%3D%2250%25%22%20y%3D%2275%25%22%20text-anchor%3D%22middle%22%3ENo%20Image%3C%2Ftext%3E%3C%2Fsvg%3E";
+
+const getSellerImageUrl = (img) => {
+  if (!img || typeof img !== "string" || img.includes("example.com") || img.includes("via.placeholder.com")) {
+    return FALLBACK_IMAGE;
+  }
+  return img;
+};
+
 const CATEGORIES = [
   "All Categories",
   "Brakes",
@@ -528,8 +538,12 @@ function SellerProductCard({ product, openMenu, setOpenMenu, onEdit, onDelete })
     <article className="group relative overflow-visible rounded-2xl border border-slate-200 bg-white transition hover:-translate-y-1 hover:border-blue-200 hover:shadow-xl hover:shadow-blue-100/40">
       <div className="relative aspect-[4/3] overflow-hidden rounded-t-2xl bg-slate-100">
         <img
-          src={product.image || "https://placehold.co/600x400?text=No+Image"}
+          src={getSellerImageUrl(product.image)}
           alt={product.name}
+          onError={(e) => {
+            e.currentTarget.onerror = null;
+            e.currentTarget.src = FALLBACK_IMAGE;
+          }}
           className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
         />
         <div className="absolute left-3 top-3 flex items-center gap-2">
@@ -588,9 +602,8 @@ function SellerProductCard({ product, openMenu, setOpenMenu, onEdit, onDelete })
               {Number(product.price).toLocaleString("en-IN")}
             </div>
             <div
-              className={`mt-1 text-[10px] font-bold ${
-                lowStock ? "text-amber-600" : outOfStock ? "text-red-600" : "text-emerald-600"
-              }`}
+              className={`mt-1 text-[10px] font-bold ${lowStock ? "text-amber-600" : outOfStock ? "text-red-600" : "text-emerald-600"
+                }`}
             >
               {product.stock} units in stock
             </div>
@@ -615,8 +628,12 @@ function SellerProductList({ product, openMenu, setOpenMenu, onEdit, onDelete })
     <article className="flex flex-col gap-4 rounded-2xl border border-slate-200 p-3 transition hover:border-blue-200 hover:shadow-md sm:flex-row">
       <div className="h-40 w-full shrink-0 overflow-hidden rounded-xl bg-slate-100 sm:h-28 sm:w-36">
         <img
-          src={product.image || "https://placehold.co/300x200?text=No+Image"}
+          src={getSellerImageUrl(product.image)}
           alt={product.name}
+          onError={(e) => {
+            e.currentTarget.onerror = null;
+            e.currentTarget.src = FALLBACK_IMAGE;
+          }}
           className="h-full w-full object-cover"
         />
       </div>
@@ -811,11 +828,10 @@ function ProductModal({
                       key={type}
                       type="button"
                       onClick={() => updateForm("type", type)}
-                      className={`rounded-xl border px-3 py-2.5 text-xs font-bold ${
-                        form.type === type
+                      className={`rounded-xl border px-3 py-2.5 text-xs font-bold ${form.type === type
                           ? "border-blue-500 bg-blue-50 text-blue-600"
                           : "border-slate-200 text-slate-500 hover:bg-slate-50"
-                      }`}
+                        }`}
                     >
                       {type}
                     </button>
@@ -988,9 +1004,8 @@ function FormInput({ label, value, onChange, placeholder, icon, required = false
           onChange={(e) => onChange(e.target.value)}
           placeholder={placeholder}
           min={type === "number" ? "0" : undefined}
-          className={`h-11 w-full rounded-xl border border-slate-200 bg-white pr-3 text-sm outline-none transition focus:border-blue-400 focus:ring-4 focus:ring-blue-50 ${
-            icon ? "pl-10" : "px-3"
-          }`}
+          className={`h-11 w-full rounded-xl border border-slate-200 bg-white pr-3 text-sm outline-none transition focus:border-blue-400 focus:ring-4 focus:ring-blue-50 ${icon ? "pl-10" : "px-3"
+            }`}
         />
       </div>
     </div>

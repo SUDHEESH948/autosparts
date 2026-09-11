@@ -138,12 +138,7 @@ export default function Footer() {
                     className="w-full rounded-lg border border-white/15 bg-white/5 px-3.5 py-2.5 text-sm text-white placeholder-slate-500 transition focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                   />
                 </div>
-                <button
-                  type="submit"
-                  className="w-full rounded-lg bg-blue-600 py-2.5 text-xs font-semibold uppercase tracking-wider text-white shadow-sm transition hover:bg-blue-500 active:scale-[0.99]"
-                >
-                  Subscribe
-                </button>
+                
               </form>
             </div>
           </div>
@@ -163,30 +158,13 @@ export default function Footer() {
               </Link>
             </div>
 
-            <div className="flex flex-wrap items-center justify-center gap-2 font-mono text-[11px]">
-              {["VISA", "MASTERCARD", "AMEX", "APPLE PAY"].map((item) => (
-                <span
-                  key={item}
-                  className="rounded border border-white/10 bg-white/[0.03] px-2.5 py-1 text-slate-400"
-                >
-                  {item}
-                </span>
-              ))}
-            </div>
+            
           </div>
         </div>
       </footer>
 
       {/* BACK TO TOP BUTTON */}
-      <button
-        type="button"
-        onClick={scrollToTop}
-        aria-label="Back to top"
-        className={`fixed bottom-24 right-6 z-40 flex h-10 w-10 items-center justify-center rounded-full border border-white/20 bg-[#121b2d]/90 text-white shadow-lg backdrop-blur-md transition-all duration-300 hover:scale-110 hover:bg-blue-600 active:scale-95 ${showTop ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-4 opacity-0"
-          }`}
-      >
-        <ArrowUp size={18} />
-      </button>
+     
     </>
   );
 }

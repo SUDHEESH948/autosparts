@@ -1,3 +1,4 @@
+
 import React, { useMemo } from "react";
 import {
   ArrowRight,
@@ -8,26 +9,14 @@ import {
 import { useNavigate } from "react-router-dom";
 
 const API_BASE_URL =
-  import.meta.env.VITE_API_URL || "https://autosparts.onrender.com";
+  import.meta.env.VITE_API_URL ||
+  "https://autosparts.onrender.com";
 
 const PLACEHOLDER_IMAGE =
   "https://images.unsplash.com/photo-1486006920555-c77dce18193b?auto=format&fit=crop&w=600&q=80";
 
-const DEFAULT_PRODUCT = {
-  _id: "default-1",
-  name: "Premium Brake Pad Set",
-  category: "Brakes",
-  price: 250,
-  description:
-    "High-performance brake pads designed for reliable stopping power and durability.",
-  image: PLACEHOLDER_IMAGE,
-  stock: 20,
-  brand: "Brembo",
-  partNumber: "BP-003",
-};
-
 /* =====================================================
-   IMAGE URL HELPER
+   IMAGE URL
 ===================================================== */
 
 const getImageUrl = (image) => {
@@ -35,7 +24,6 @@ const getImageUrl = (image) => {
     return PLACEHOLDER_IMAGE;
   }
 
-  // If backend already returns a complete URL
   if (
     image.startsWith("http://") ||
     image.startsWith("https://") ||
@@ -44,7 +32,6 @@ const getImageUrl = (image) => {
     return image;
   }
 
-  // Backend-relative image path
   if (image.startsWith("/")) {
     return `${API_BASE_URL}${image}`;
   }
@@ -57,17 +44,21 @@ const getImageUrl = (image) => {
 ===================================================== */
 
 const formatPrice = (price) => {
-  if (price === undefined || price === null || price === "") {
+  if (
+    price === undefined ||
+    price === null ||
+    price === ""
+  ) {
     return "Price on request";
   }
 
   const numericPrice = Number(price);
 
   if (Number.isNaN(numericPrice)) {
-    return price;
+    return String(price);
   }
 
-  return `AED ${numericPrice.toLocaleString()}`;
+  return `AED ${numericPrice.toLocaleString("en-IN")}`;
 };
 
 /* =====================================================
@@ -77,49 +68,66 @@ const formatPrice = (price) => {
 const ProductCard = ({ product }) => {
   const navigate = useNavigate();
 
-  const currentProduct = product || DEFAULT_PRODUCT;
+  /* ---------------------------------------------------
+     NO PRODUCT
+  --------------------------------------------------- */
+
+  if (!product) {
+    return null;
+  }
 
   /* ---------------------------------------------------
      PRODUCT DATA
   --------------------------------------------------- */
 
   const productId =
-    currentProduct._id ||
-    currentProduct.id ||
-    currentProduct.productId;
+    product._id ||
+    product.id ||
+    product.productId;
 
   const productName =
-    currentProduct.name ||
-    currentProduct.productName ||
-    currentProduct.title ||
+    product.name ||
+    product.productName ||
+    product.title ||
     "Product";
 
   const category =
-    currentProduct.category ||
-    currentProduct.categoryName ||
+    product.category ||
+    product.categoryName ||
     "Auto Parts";
 
   const description =
-    currentProduct.description ||
-    currentProduct.shortDescription ||
+    product.description ||
+    product.shortDescription ||
     "High-quality automotive product.";
 
   const price =
-    currentProduct.price ??
-    currentProduct.sellingPrice ??
-    currentProduct.amount;
+    product.price ??
+    product.sellingPrice ??
+    product.amount;
+
+  const brand = product.brand || "";
+
+  const partNumber =
+    product.partNumber || "";
+
+  const stock =
+    product.stock !== undefined &&
+    product.stock !== null
+      ? Number(product.stock)
+      : 0;
 
   /* ---------------------------------------------------
      IMAGE
   --------------------------------------------------- */
 
   const rawImage =
-    currentProduct.image ||
-    currentProduct.imageUrl ||
-    currentProduct.productImage ||
-    currentProduct.thumbnail ||
-    (Array.isArray(currentProduct.images)
-      ? currentProduct.images[0]
+    product.image ||
+    product.imageUrl ||
+    product.productImage ||
+    product.thumbnail ||
+    (Array.isArray(product.images)
+      ? product.images[0]
       : null);
 
   const imageUrl = useMemo(
@@ -134,24 +142,22 @@ const ProductCard = ({ product }) => {
   const features = useMemo(() => {
     const result = [];
 
-    if (currentProduct.brand) {
-      result.push(currentProduct.brand);
+    if (brand) {
+      result.push(brand);
     }
 
-    if (currentProduct.warranty) {
-      result.push(currentProduct.warranty);
+    if (partNumber) {
+      result.push(partNumber);
     }
 
-    if (currentProduct.stock !== undefined) {
+    if (result.length === 0) {
       result.push(
-        Number(currentProduct.stock) > 0
-          ? "In Stock"
-          : "Out of Stock"
+        stock > 0 ? "In Stock" : "Out of Stock"
       );
     }
 
     return result.slice(0, 2);
-  }, [currentProduct]);
+  }, [brand, partNumber, stock]);
 
   /* ---------------------------------------------------
      VIEW PRODUCT
@@ -159,7 +165,10 @@ const ProductCard = ({ product }) => {
 
   const handleViewProduct = () => {
     if (!productId) {
-      console.error("Product ID missing:", currentProduct);
+      console.error(
+        "Product ID missing:",
+        product
+      );
       return;
     }
 
@@ -172,12 +181,13 @@ const ProductCard = ({ product }) => {
 
   const handleImageError = (event) => {
     event.currentTarget.onerror = null;
-    event.currentTarget.src = PLACEHOLDER_IMAGE;
+    event.currentTarget.src =
+      PLACEHOLDER_IMAGE;
   };
 
-  /* ===================================================
+  /* =====================================================
      UI
-  =================================================== */
+  ===================================================== */
 
   return (
     <article
@@ -199,9 +209,7 @@ const ProductCard = ({ product }) => {
         hover:shadow-xl
       "
     >
-      {/* =================================================
-          IMAGE
-      ================================================= */}
+      {/* IMAGE */}
 
       <div className="relative aspect-[4/3] overflow-hidden bg-gray-100">
         <img
@@ -242,35 +250,31 @@ const ProductCard = ({ product }) => {
 
         {/* STOCK */}
 
-        {product.stock !== undefined && (
-          <div
-            className={`
-              absolute
-              right-3
-              top-3
-              rounded-full
-              px-3
-              py-1
-              text-xs
-              font-semibold
-              shadow-sm
-              ${
-                Number(product.stock) > 0
-                  ? "bg-green-100 text-green-700"
-                  : "bg-red-100 text-red-700"
-              }
-            `}
-          >
-            {Number(product.stock) > 0
-              ? "In Stock"
-              : "Out of Stock"}
-          </div>
-        )}
+        <div
+          className={`
+            absolute
+            right-3
+            top-3
+            rounded-full
+            px-3
+            py-1
+            text-xs
+            font-semibold
+            shadow-sm
+            ${
+              stock > 0
+                ? "bg-green-100 text-green-700"
+                : "bg-red-100 text-red-700"
+            }
+          `}
+        >
+          {stock > 0
+            ? `${stock} In Stock`
+            : "Out of Stock"}
+        </div>
       </div>
 
-      {/* =================================================
-          CONTENT
-      ================================================= */}
+      {/* CONTENT */}
 
       <div className="flex flex-1 flex-col p-5">
         {/* CATEGORY */}
@@ -279,7 +283,7 @@ const ProductCard = ({ product }) => {
           {category}
         </p>
 
-        {/* PRODUCT NAME */}
+        {/* NAME */}
 
         <h3
           className="
@@ -309,43 +313,41 @@ const ProductCard = ({ product }) => {
           {description}
         </p>
 
-        {/* =================================================
-            FEATURES
-        ================================================= */}
+        {/* FEATURES */}
 
         {features.length > 0 && (
           <div className="mt-4 flex flex-wrap gap-2">
-            {features.map((feature, index) => (
-              <span
-                key={`${feature}-${index}`}
-                className="
-                  inline-flex
-                  items-center
-                  gap-1
-                  rounded-full
-                  bg-gray-50
-                  px-2.5
-                  py-1
-                  text-xs
-                  font-medium
-                  text-gray-600
-                "
-              >
-                {index === 0 ? (
-                  <ShieldCheck size={13} />
-                ) : (
-                  <Wrench size={13} />
-                )}
+            {features.map(
+              (feature, index) => (
+                <span
+                  key={`${feature}-${index}`}
+                  className="
+                    inline-flex
+                    items-center
+                    gap-1
+                    rounded-full
+                    bg-gray-50
+                    px-2.5
+                    py-1
+                    text-xs
+                    font-medium
+                    text-gray-600
+                  "
+                >
+                  {index === 0 ? (
+                    <ShieldCheck size={13} />
+                  ) : (
+                    <Wrench size={13} />
+                  )}
 
-                {feature}
-              </span>
-            ))}
+                  {feature}
+                </span>
+              )
+            )}
           </div>
         )}
 
-        {/* =================================================
-            BOTTOM
-        ================================================= */}
+        {/* BOTTOM */}
 
         <div className="mt-auto pt-5">
           <div className="mb-4 flex items-center justify-between gap-3">
@@ -361,7 +363,7 @@ const ProductCard = ({ product }) => {
               </p>
             </div>
 
-            {/* PRODUCT ICON */}
+            {/* ICON */}
 
             <div
               className="
@@ -379,9 +381,7 @@ const ProductCard = ({ product }) => {
             </div>
           </div>
 
-          {/* =================================================
-              VIEW PRODUCT BUTTON
-          ================================================= */}
+          {/* BUTTON */}
 
           <button
             type="button"

@@ -1,0 +1,258 @@
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap");
+@import "tailwindcss";
+
+:root {
+  --asphalt: #102a56;
+  --asphalt-2: #173d78;
+  --concrete: #eef5ff;
+  --concrete-2: #dceaff;
+  --chrome: #5e7394;
+  --chrome-light: #d7e5f8;
+  --blue: #1457b8;
+  --blue-dark: #0b3c83;
+  --amber: #2d6fca;
+  --white: #ffffff;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background: #f8fafc;
+  color: var(--asphalt);
+  font-family: "Montserrat", sans-serif;
+  overflow-x: hidden;
+}
+
+.product-card-wrapper {
+  height: 410px;
+  perspective: 1400px;
+}
+
+.product-card-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  transition: transform .75s cubic-bezier(.16, 1, .3, 1);
+}
+
+.product-card-front,
+.product-card-back {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.product-card-back {
+  transform: rotateY(180deg);
+}
+
+.product-card-wrapper.is-flipped .product-card-inner {
+  transform: rotateY(180deg);
+}
+
+@media (min-width: 768px) {
+  .product-card-wrapper:hover .product-card-inner {
+    transform: rotateY(180deg);
+  }
+}
+
+@media (max-width: 767px) {
+  .product-card-wrapper:hover .product-card-inner {
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .product-card-inner {
+    transition-duration: .01ms;
+  }
+}
+
+.store-shell {
+  position: relative;
+  isolation: isolate;
+  background-color: #f8fafc;
+  background-image:
+    radial-gradient(circle at 12% 16%, rgba(191, 219, 254, 0.42), transparent 25rem),
+    radial-gradient(circle at 88% 38%, rgba(219, 234, 254, 0.5), transparent 28rem),
+    radial-gradient(circle at 42% 82%, rgba(239, 246, 255, 0.92), transparent 32rem);
+}
+
+.store-shell::before {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.72), transparent 32rem);
+  content: "";
+  pointer-events: none;
+}
+
+.font-display {
+  font-family: "Montserrat", sans-serif;
+}
+
+.font-mono {
+  font-family: "Courier New", monospace;
+}
+
+::selection {
+  background: var(--blue);
+  color: white;
+}
+
+/* Keep the existing utility-based components on the blue and white theme. */
+[class*="text-[#e2231a]"],
+[class*="text-[#E2231A]"] {
+  color: var(--blue) !important;
+}
+
+[class*="bg-[#e2231a]"],
+[class*="bg-[#E2231A]"] {
+  background-color: var(--blue) !important;
+}
+
+[class*="border-[#e2231a]"],
+[class*="border-[#E2231A]"] {
+  border-color: var(--blue) !important;
+}
+
+[class*="text-[#15161a]"],
+[class*="text-[#15161A]"] {
+  color: var(--asphalt) !important;
+}
+
+[class*="bg-[#15161a]"],
+[class*="bg-[#15161A]"] {
+  background-color: var(--asphalt) !important;
+}
+
+[class*="bg-[#fbfaf7]"],
+[class*="bg-[#FBFAF7]"] {
+  background-color: var(--white) !important;
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(22px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes pulse {
+
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: .4;
+    transform: scale(1.5);
+  }
+}
+
+@keyframes needleSweep {
+  0% {
+    transform: rotate(-120deg);
+  }
+
+  55% {
+    transform: rotate(48deg);
+  }
+
+  70% {
+    transform: rotate(18deg);
+  }
+
+  100% {
+    transform: rotate(30deg);
+  }
+}
+
+@keyframes floatY {
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-16px);
+  }
+}
+
+.animate-fade-up {
+  animation: fadeUp .7s ease forwards;
+}
+
+.animate-fade-in {
+  animation: fadeIn 1s ease forwards;
+}
+
+.animate-needle {
+  transform-origin: 210px 210px;
+  animation: needleSweep 3.2s cubic-bezier(.35, 1.6, .4, 1) forwards;
+}
+
+.animate-float {
+  animation: floatY 5s ease-in-out infinite;
+}
+
+.stagger-grid>* {
+  animation: itemReveal 0.6s cubic-bezier(.2, .7, .2, 1) both;
+}
+
+.stagger-grid> :nth-child(2) {
+  animation-delay: 0.08s;
+}
+
+.stagger-grid> :nth-child(3) {
+  animation-delay: 0.16s;
+}
+
+.stagger-grid> :nth-child(4) {
+  animation-delay: 0.24s;
+}
+
+@keyframes itemReveal {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+  .page-section,
+  .stagger-grid>* {
+    animation: none;
+  }
+}

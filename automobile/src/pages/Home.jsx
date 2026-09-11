@@ -1,9 +1,48 @@
+import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import Hero from "../components/Hero";
 import ProductCard from "../components/ProductCard";
-import PRODUCTS from "../data/products";
-import { Link } from "react-router-dom";
+import INITIAL_PRODUCTS from "../data/products";
+import { ProductService } from "../api/api";
+import { subscribeToProductsChanged } from "../utils/productSync";
 
 export default function Home() {
+  const [products, setProducts] = useState(INITIAL_PRODUCTS);
+
+  const loadFeatured = async () => {
+    try {
+      const data = await ProductService.getAll(1, 6);
+      if (data?.products && data.products.length > 0) {
+        setProducts(data.products);
+      }
+    } catch {
+      // Fallback to initial local products
+    }
+  };
+
+  useEffect(() => {
+    loadFeatured();
+
+    const unsubscribe = subscribeToProductsChanged(() => {
+      loadFeatured();
+    });
+
+    const handleFocus = () => {
+      if (document.visibilityState === "visible") {
+        loadFeatured();
+      }
+    };
+
+    window.addEventListener("focus", handleFocus);
+    document.addEventListener("visibilitychange", handleFocus);
+
+    return () => {
+      unsubscribe();
+      window.removeEventListener("focus", handleFocus);
+      document.removeEventListener("visibilitychange", handleFocus);
+    };
+  }, []);
+
   return (
     <>
       <Hero />
@@ -28,8 +67,8 @@ export default function Home() {
           </div>
 
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {PRODUCTS.map((item) => (
-              <ProductCard key={item.id} product={item} />
+            {products.slice(0, 6).map((item) => (
+              <ProductCard key={item._id || item.id} product={item} />
             ))}
           </div>
         </div>

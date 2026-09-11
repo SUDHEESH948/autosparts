@@ -29,6 +29,7 @@ import {
   Loader2,
 } from "lucide-react";
 import { ProductService } from "../api/api";
+import { notifyProductsChanged } from "../utils/productSync";
 
 const FALLBACK_IMAGE =
   "data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22600%22%20height%3D%22450%22%20viewBox%3D%220%200%20600%20450%22%3E%3Crect%20fill%3D%22%23f1f5f9%22%20width%3D%22600%22%20height%3D%22450%22%2F%3E%3Ccircle%20cx%3D%22300%22%20cy%3D%22200%22%20r%3D%2245%22%20fill%3D%22%23cbd5e1%22%2F%3E%3Cpath%20d%3D%22M260%20270h80v12h-80zm-30%2024h140v8H230z%22%20fill%3D%22%2394a3b8%22%2F%3E%3Ctext%20fill%3D%22%2364748b%22%20font-family%3D%22system-ui%2C%20sans-serif%22%20font-size%3D%2218%22%20font-weight%3D%22700%22%20x%3D%2250%25%22%20y%3D%2275%25%22%20text-anchor%3D%22middle%22%3ENo%20Image%3C%2Ftext%3E%3C%2Fsvg%3E";
@@ -253,8 +254,10 @@ export default function SellerDashboard() {
       if (editingProduct) {
         const id = editingProduct._id || editingProduct.id;
         await ProductService.update(id, payload);
+        notifyProductsChanged({ action: "update", id, product: payload });
       } else {
         await ProductService.create(payload);
+        notifyProductsChanged({ action: "create", product: payload });
       }
 
       await loadProducts();
@@ -273,6 +276,7 @@ export default function SellerDashboard() {
 
     try {
       await ProductService.delete(productId);
+      notifyProductsChanged({ action: "delete", productId });
       setProducts((prev) => prev.filter((item) => (item._id || item.id) !== productId));
       setOpenMenu(null);
     } catch (err) {
@@ -829,8 +833,8 @@ function ProductModal({
                       type="button"
                       onClick={() => updateForm("type", type)}
                       className={`rounded-xl border px-3 py-2.5 text-xs font-bold ${form.type === type
-                          ? "border-blue-500 bg-blue-50 text-blue-600"
-                          : "border-slate-200 text-slate-500 hover:bg-slate-50"
+                        ? "border-blue-500 bg-blue-50 text-blue-600"
+                        : "border-slate-200 text-slate-500 hover:bg-slate-50"
                         }`}
                     >
                       {type}

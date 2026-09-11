@@ -27,12 +27,12 @@ export const notifyProductsChanged = (detail = {}) => {
         detail: { timestamp, ...detail },
       })
     );
-  } catch {}
+  } catch { }
 
   // 2. Cross-tab localStorage event
   try {
     localStorage.setItem(STORAGE_KEY, String(timestamp));
-  } catch {}
+  } catch { }
 
   // 3. Modern BroadcastChannel
   try {
@@ -43,14 +43,14 @@ export const notifyProductsChanged = (detail = {}) => {
         ...detail,
       });
     }
-  } catch {}
+  } catch { }
 };
 
 /**
  * Listen for product mutations across all tabs and the current window
  */
 export const subscribeToProductsChanged = (callback) => {
-  if (typeof window === "undefined") return () => {};
+  if (typeof window === "undefined") return () => { };
 
   const onCustomEvent = (e) => {
     callback(e.detail || {});
@@ -83,3 +83,4 @@ export const subscribeToProductsChanged = (callback) => {
     }
   };
 };
+

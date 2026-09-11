@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
 import {
   Search,
   Plus,
@@ -27,10 +28,12 @@ import {
   MessageCircle,
   MapPin,
   Loader2,
+  LogOut,
+  ExternalLink,
 } from "lucide-react";
 import { ProductService } from "../api/api";
 import { notifyProductsChanged } from "../utils/productSync";
-
+import logo from "../assets/logo.png";
 const FALLBACK_IMAGE =
   "data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22600%22%20height%3D%22450%22%20viewBox%3D%220%200%20600%20450%22%3E%3Crect%20fill%3D%22%23f1f5f9%22%20width%3D%22600%22%20height%3D%22450%22%2F%3E%3Ccircle%20cx%3D%22300%22%20cy%3D%22200%22%20r%3D%2245%22%20fill%3D%22%23cbd5e1%22%2F%3E%3Cpath%20d%3D%22M260%20270h80v12h-80zm-30%2024h140v8H230z%22%20fill%3D%22%2394a3b8%22%2F%3E%3Ctext%20fill%3D%22%2364748b%22%20font-family%3D%22system-ui%2C%20sans-serif%22%20font-size%3D%2218%22%20font-weight%3D%22700%22%20x%3D%2250%25%22%20y%3D%2275%25%22%20text-anchor%3D%22middle%22%3ENo%20Image%3C%2Ftext%3E%3C%2Fsvg%3E";
 
@@ -93,6 +96,22 @@ const EMPTY_FORM = {
 };
 
 export default function SellerDashboard() {
+  const navigate = useNavigate();
+  const [currentUser, setCurrentUser] = useState(() => {
+    try {
+      const stored = localStorage.getItem("user");
+      return stored ? JSON.parse(stored) : null;
+    } catch {
+      return null;
+    }
+  });
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    navigate("/login", { replace: true });
+  };
+
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
@@ -299,32 +318,50 @@ export default function SellerDashboard() {
 
       {/* Header */}
       <header className="sticky top-0 z-50 border-b border-slate-200 bg-white/95 backdrop-blur-xl">
-        <div className="mx-auto flex h-[72px] max-w-[1500px] items-center justify-between px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#e2231a] text-white shadow-lg shadow-red-100">
-              <Car size={21} strokeWidth={2.5} />
-            </div>
-            <div>
-              <div className="text-lg font-black tracking-tight">Shoppy</div>
-              <div className="hidden text-[10px] font-bold uppercase tracking-[0.18em] text-slate-400 sm:block">
-                Seller Center
+        <div className="flex h-20 w-full items-center justify-between px-4 sm:px-6 lg:px-10">
+          <Link to="/products" className="flex items-center gap-3">
+            <img
+              src={logo}
+              alt="Ezin Zahan Spare Parts"
+              className="h-11 sm:h-12 w-auto object-contain"
+            />
+          </Link>
+
+          <div className="flex items-center gap-2.5 sm:gap-4">
+            {/* Storefront Link */}
+            <Link
+              to="/products"
+              className="hidden sm:inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3.5 py-2 text-xs font-bold text-slate-700 hover:bg-slate-50 transition shadow-sm"
+            >
+              <ExternalLink size={14} />
+              Storefront
+            </Link>
+
+            {/* Seller profile pill */}
+            <div className="flex items-center gap-2 rounded-full md:rounded-xl bg-slate-100/90 p-1 md:px-3 md:py-1.5 border border-slate-200/60 shadow-xs">
+              <div className="flex h-7 w-7 items-center justify-center rounded-full bg-blue-600 text-xs font-bold text-white uppercase shadow-sm">
+                {currentUser?.name ? currentUser.name.charAt(0) : "S"}
+              </div>
+              <div className="hidden md:block text-left">
+                <div className="text-xs font-bold text-slate-800 leading-tight">
+                  {currentUser?.name || "Seller"}
+                </div>
+                <div className="text-[10px] text-slate-500 leading-tight truncate max-w-[140px]">
+                  {currentUser?.email || "Authorized Seller"}
+                </div>
               </div>
             </div>
-          </div>
 
-          <div className="hidden items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-5 py-2 text-xs font-semibold text-slate-500 md:flex">
-            <span className="h-2 w-2 rounded-full bg-emerald-500" />
-            shoppy.gg/seller/dashboard
-          </div>
-
-          <div className="flex items-center gap-3">
-            <div className="hidden text-right sm:block">
-              <div className="text-sm font-bold">Kristin Watson</div>
-              <div className="text-xs text-slate-400">Seller Account</div>
-            </div>
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 font-black text-white">
-              K
-            </div>
+            {/* Sign Out button */}
+            <button
+              type="button"
+              onClick={handleLogout}
+              className="inline-flex items-center gap-1.5 rounded-xl border border-red-200 bg-red-50 hover:bg-red-100 text-red-700 px-3 py-2 text-xs font-bold transition shadow-sm cursor-pointer"
+              title="Sign out of seller account"
+            >
+              <LogOut size={15} />
+              <span className="hidden sm:inline">Sign Out</span>
+            </button>
           </div>
         </div>
       </header>
@@ -352,52 +389,14 @@ export default function SellerDashboard() {
           </button>
         </div>
 
-        {/* Profile Card */}
-        <section className="mt-6 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-          <div className="flex flex-col gap-5 p-5 sm:p-6 lg:flex-row lg:items-center lg:justify-between">
-            <div className="flex items-center gap-4">
-              <div className="relative">
-                <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-slate-900 text-2xl font-black text-white">
-                  K
-                </div>
-                <span className="absolute -bottom-1 -right-1 h-5 w-5 rounded-full border-4 border-white bg-emerald-500" />
-              </div>
-              <div>
-                <div className="flex flex-wrap items-center gap-2">
-                  <h2 className="text-xl font-black">Kristin Watson</h2>
-                  <span className="inline-flex items-center gap-1 rounded-full bg-blue-50 px-2.5 py-1 text-[10px] font-black text-blue-600">
-                    <ShieldCheck size={13} /> Verified Seller
-                  </span>
-                </div>
-                <div className="mt-1 flex flex-wrap items-center gap-2 text-xs text-slate-400">
-                  <span className="text-emerald-600 font-bold">● Online</span>
-                  <span>•</span>
-                  <span className="flex items-center gap-1">
-                    <MapPin size={13} /> Dubai, UAE
-                  </span>
-                  <span>•</span>
-                  <span>Seller since 2012</span>
-                </div>
-              </div>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="flex items-center gap-1 rounded-xl bg-amber-50 px-3 py-2 text-sm font-black text-amber-700">
-                <Star size={16} className="fill-amber-400 text-amber-400" /> 4.8
-              </div>
-              <button className="inline-flex items-center gap-2 rounded-xl border border-slate-200 px-4 py-2.5 text-xs font-bold text-slate-600 hover:bg-slate-50">
-                <MessageCircle size={16} /> Storefront
-              </button>
-            </div>
-          </div>
-        </section>
+
 
         {/* Stats Grid */}
-        <section className="mt-5 grid grid-cols-2 gap-3 lg:grid-cols-5">
+        <section className="mt-5 grid grid-cols-2 gap-3 lg:grid-cols-4">
           <DashboardStat icon={<Package size={19} />} title="Total Products" value={totalProducts} description="All listings" />
           <DashboardStat icon={<CheckCircle2 size={19} />} title="Active" value={activeProducts} description="Available products" iconClass="bg-emerald-50 text-emerald-600" />
           <DashboardStat icon={<AlertTriangle size={19} />} title="Low Stock" value={lowStockProducts} description="5 units or less" iconClass="bg-amber-50 text-amber-600" />
           <DashboardStat icon={<Boxes size={19} />} title="Out of Stock" value={outOfStockProducts} description="Needs restocking" iconClass="bg-red-50 text-red-600" />
-          <DashboardStat icon={<Star size={19} />} title="Feedback" value="217" description="Customer reviews" iconClass="bg-blue-50 text-blue-600" />
         </section>
 
         {/* Product Table / Grid Area */}
@@ -411,9 +410,7 @@ export default function SellerDashboard() {
                     {filteredProducts.length}
                   </span>
                 </h2>
-                <p className="mt-1 text-xs text-slate-400">
-                  Synchronized directly with your MongoDB database.
-                </p>
+
               </div>
 
               <div className="flex items-center gap-2">

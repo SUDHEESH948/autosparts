@@ -127,8 +127,8 @@ export default function ProductCard({ product, onInquire }) {
                 {/* STOCK PILL */}
                 <div
                     className={`absolute right-3 top-3 rounded-full px-3 py-1 text-xs font-semibold shadow-sm ${stock > 0
-                            ? "bg-green-100 text-green-700"
-                            : "bg-red-100 text-red-700"
+                        ? "bg-green-100 text-green-700"
+                        : "bg-red-100 text-red-700"
                         }`}
                 >
                     {stock > 0 ? `${stock} In Stock` : "Out of Stock"}

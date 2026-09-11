@@ -1,4 +1,3 @@
-
 require("dotenv").config();
 
 const express = require("express");
@@ -6,6 +5,8 @@ const cors = require("cors");
 
 const connectDB = require("./src/config/db");
 const productRoutes = require("./src/routes/productRoutes");
+const authRoutes = require("./src/routes/authRoutes");
+const createDefaultUser = require("./src/seed/defaultUser");
 
 const app = express();
 
@@ -13,7 +14,16 @@ const app = express();
    DATABASE
 ===================================================== */
 
-connectDB();
+connectDB()
+    .then(async () => {
+        console.log("MongoDB connected successfully");
+
+        // Create default seller if it doesn't exist
+        await createDefaultUser();
+    })
+    .catch((error) => {
+        console.error("MongoDB connection failed:", error.message);
+    });
 
 /* =====================================================
    CORS
@@ -22,22 +32,27 @@ connectDB();
 const allowedOrigins = [
     "http://localhost:5173",
     "http://127.0.0.1:5173",
+    "http://localhost:5174",
+    "http://127.0.0.1:5174",
     process.env.FRONTEND_URL,
 ].filter(Boolean);
 
 app.use(
     cors({
         origin: function (origin, callback) {
-            // Allow Postman, mobile apps, curl and server-to-server requests
+            // Allow Postman, curl, mobile apps and
+            // server-to-server requests
             if (!origin) {
                 return callback(null, true);
             }
 
-            // Allow localhost, custom FRONTEND_URL, or any Vercel deployment preview/production
-            if (
-                allowedOrigins.includes(origin) ||
-                origin.endsWith(".vercel.app")
-            ) {
+            // Allow configured origins
+            if (allowedOrigins.includes(origin)) {
+                return callback(null, true);
+            }
+
+            // Allow Vercel deployments
+            if (origin.endsWith(".vercel.app")) {
                 return callback(null, true);
             }
 
@@ -45,6 +60,7 @@ app.use(
                 new Error("CORS origin not allowed")
             );
         },
+
         methods: [
             "GET",
             "POST",
@@ -53,10 +69,13 @@ app.use(
             "DELETE",
             "OPTIONS",
         ],
+
         allowedHeaders: [
             "Content-Type",
             "Authorization",
         ],
+
+        credentials: true,
     })
 );
 
@@ -99,6 +118,12 @@ app.get("/api/health", (req, res) => {
         timestamp: new Date().toISOString(),
     });
 });
+
+/* =====================================================
+   AUTH ROUTES
+===================================================== */
+
+app.use("/api/auth", authRoutes);
 
 /* =====================================================
    PRODUCT ROUTES
@@ -149,6 +174,7 @@ app.listen(PORT, () => {
     console.log(" Ezin Zahan Spare Parts Backend");
     console.log("==========================================");
     console.log(` Server: http://localhost:${PORT}`);
+    console.log(` Login:  http://localhost:${PORT}/api/auth/login`);
+    console.log(` Products: http://localhost:${PORT}/api/products`);
     console.log("==========================================");
 });
-

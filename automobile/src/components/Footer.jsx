@@ -1,5 +1,6 @@
 import { ArrowUp } from "lucide-react";
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import logo from "../assets/logo.png";
 
 export default function Footer() {
@@ -149,9 +150,18 @@ export default function Footer() {
 
           {/* BOTTOM BAR */}
           <div className="flex flex-col items-center justify-between gap-4 py-6 text-xs text-slate-400 md:flex-row">
-            <p className="text-center md:text-left">
-              © {new Date().getFullYear()} Ezin Zahan Auto Spare Parts Trading LLC. P.O. Box No. 237590, Dubai, UAE. All rights reserved.
-            </p>
+            <div className="flex flex-wrap items-center justify-center gap-2 text-center md:text-left">
+              <span>
+                © {new Date().getFullYear()} Ezin Zahan Auto Spare Parts Trading LLC. P.O. Box No. 237590, Dubai, UAE. All rights reserved.
+              </span>
+              <span className="text-slate-600">&bull;</span>
+              <Link
+                to="/login"
+                className="text-slate-400 hover:text-white transition-colors underline-offset-4 hover:underline"
+              >
+                Seller Portal
+              </Link>
+            </div>
 
             <div className="flex flex-wrap items-center justify-center gap-2 font-mono text-[11px]">
               {["VISA", "MASTERCARD", "AMEX", "APPLE PAY"].map((item) => (
@@ -172,9 +182,8 @@ export default function Footer() {
         type="button"
         onClick={scrollToTop}
         aria-label="Back to top"
-        className={`fixed bottom-24 right-6 z-40 flex h-10 w-10 items-center justify-center rounded-full border border-white/20 bg-[#121b2d]/90 text-white shadow-lg backdrop-blur-md transition-all duration-300 hover:scale-110 hover:bg-blue-600 active:scale-95 ${
-          showTop ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-4 opacity-0"
-        }`}
+        className={`fixed bottom-24 right-6 z-40 flex h-10 w-10 items-center justify-center rounded-full border border-white/20 bg-[#121b2d]/90 text-white shadow-lg backdrop-blur-md transition-all duration-300 hover:scale-110 hover:bg-blue-600 active:scale-95 ${showTop ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-4 opacity-0"
+          }`}
       >
         <ArrowUp size={18} />
       </button>

@@ -7,6 +7,19 @@ const WHATSAPP_NUMBER = "971568706629";
 const FALLBACK_IMAGE =
     "https://images.unsplash.com/photo-1486006920555-c77dce18193b?auto=format&fit=crop&w=600&q=80";
 
+const DEFAULT_PRODUCT = {
+    _id: "default-1",
+    name: "Premium Brake Pad Set",
+    category: "Brakes",
+    price: 250,
+    description:
+        "High-performance brake pads designed for reliable stopping power and durability.",
+    image: FALLBACK_IMAGE,
+    stock: 20,
+    brand: "Brembo",
+    partNumber: "BP-003",
+};
+
 export default function ProductCard({
     product,
     flipped = false,
@@ -15,7 +28,8 @@ export default function ProductCard({
 }) {
     const [isHovered, setIsHovered] = useState(false);
 
-    if (!product) return null;
+    // Fallback to default product if not provided so card is never invisible
+    const currentProduct = product || DEFAULT_PRODUCT;
 
     // =========================================================
     // FINAL FLIP STATE
@@ -41,8 +55,8 @@ export default function ProductCard({
 
 I am interested in the following item:
 
-• Product: ${product.name || "N/A"}
-• Category: ${product.category || "General"}
+• Product: ${currentProduct.name || "N/A"}
+• Category: ${currentProduct.category || "General"}
 
 Please share a quote and confirm availability.
 
@@ -108,7 +122,7 @@ Thank you!`;
             onKeyDown={handleKeyDown}
             role="button"
             tabIndex={0}
-            aria-label={`View details for ${product.name}`}
+            aria-label={`View details for ${currentProduct.name}`}
         >
             {/* =====================================================
                 3D CARD INNER
@@ -143,8 +157,8 @@ Thank you!`;
                     {/* IMAGE */}
                     <div className="relative h-[210px] overflow-hidden bg-slate-100">
                         <img
-                            src={product.image || FALLBACK_IMAGE}
-                            alt={product.name}
+                            src={currentProduct.image || FALLBACK_IMAGE}
+                            alt={currentProduct.name}
                             draggable="false"
                             loading="lazy"
                             decoding="async"
@@ -170,12 +184,12 @@ Thank you!`;
                     <div className="flex h-[200px] flex-col bg-white p-5">
                         {/* NAME */}
                         <h3 className="text-[15px] font-extrabold leading-snug tracking-tight text-slate-950">
-                            {product.name}
+                            {currentProduct.name}
                         </h3>
 
                         {/* DESCRIPTION */}
                         <p className="mt-2 line-clamp-2 text-[11px] font-medium leading-5 text-slate-500">
-                            {product.description}
+                            {currentProduct.description}
                         </p>
 
                         {/* PRICE + WHATSAPP */}
@@ -187,7 +201,7 @@ Thank you!`;
                                 </span>
 
                                 <span className="mt-1 block text-2xl font-black leading-none text-slate-950">
-                                    AED {product.price}
+                                    AED {currentProduct.price}
                                 </span>
 
                                 {/* STOCK */}
@@ -200,7 +214,7 @@ Thank you!`;
                             {/* WHATSAPP BUTTON */}
                             <button
                                 type="button"
-                                aria-label={`WhatsApp enquiry for ${product.name}`}
+                                aria-label={`WhatsApp enquiry for ${currentProduct.name}`}
                                 onClick={openWhatsApp}
                                 onMouseEnter={(e) => e.stopPropagation()}
                                 onTouchStart={(e) => e.stopPropagation()}
@@ -237,7 +251,7 @@ Thank you!`;
                         {/* TOP BAR */}
                         <div className="relative flex items-center justify-between">
                             <span className="rounded-lg border border-sky-400/20 bg-sky-400/10 px-3 py-1.5 text-[9px] font-extrabold uppercase tracking-wider text-sky-400">
-                                {product.category}
+                                {currentProduct.category}
                             </span>
 
                             <span className="text-[8px] font-bold uppercase tracking-[.2em] text-slate-500">
@@ -255,12 +269,12 @@ Thank you!`;
 
                         {/* NAME */}
                         <h3 className="relative mt-5 text-lg font-black uppercase leading-tight tracking-tight text-white">
-                            {product.name}
+                            {currentProduct.name}
                         </h3>
 
                         {/* DESCRIPTION */}
                         <p className="relative mt-3 text-[10px] font-medium leading-5 text-slate-400">
-                            {product.description}
+                            {currentProduct.description}
                         </p>
 
                         {/* INFO GRID */}
@@ -272,7 +286,7 @@ Thank you!`;
                                 </span>
 
                                 <span className="mt-1 block text-sm font-black text-white">
-                                    AED {product.price}
+                                    AED {currentProduct.price}
                                 </span>
                             </div>
 
@@ -283,7 +297,9 @@ Thank you!`;
                                 </span>
 
                                 <span className="mt-1 block text-[10px] font-extrabold uppercase text-emerald-400">
-                                    In Stock
+                                    {currentProduct.stock > 0
+                                        ? `${currentProduct.stock} in Stock`
+                                        : "In Stock"}
                                 </span>
                             </div>
                         </div>
@@ -322,4 +338,4 @@ Thank you!`;
             </div>
         </div>
     );
-}
+} familiar
